@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:islami/app_theme.dart';
+import 'package:islami/nav_bar_selected_icon.dart';
+import 'package:islami/nav_bar_unselected-icon.dart';
 import 'package:islami/tabs/quran/quran_tab.dart';
 import 'package:islami/tabs/hadeth/hadeth_tab.dart';
 import 'package:islami/tabs/radio/radio_tab.dart';
@@ -10,13 +10,17 @@ import 'package:islami/tabs/time/time_tab.dart';
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
 
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentIndex = 0;
-  List<Widget> _tabs = [
+  int currentIndex = 0; // Default to the first tab
+
+  // List of tabs to display
+  List<Widget> tabs = [
     QuranTab(),
     HadethTab(),
     SebhaTab(),
@@ -24,10 +28,42 @@ class _HomeScreenState extends State<HomeScreen> {
     TimeTab(),
   ];
 
+  // List of background image names corresponding to each tab
+  List<String> backgroundImagesNames = [
+    'quran_background',
+    'hadeth_background',
+    'sebha_background',
+    'radio_background',
+    'time_background',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    // Debug print to check the current index
+
     return Scaffold(
-      body: _tabs[currentIndex],
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/images/${backgroundImagesNames[currentIndex]}.png',
+            ),
+            fit: BoxFit.fill,
+          ),
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/header.png',
+              height: MediaQuery.sizeOf(context).height * 0.18,
+            ),
+            Expanded(
+              child: tabs[currentIndex], // Display the selected tab
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
@@ -36,53 +72,28 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/quran.svg',
-              colorFilter: ColorFilter.mode(
-                currentIndex == 0 ? Colors.white : Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon: NavBarUnselectedIcon(imageName: 'quran'),
+            activeIcon: NavBarSelectedIcon(imageName: 'quran'),
             label: 'Quran',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/hadeth.svg',
-              colorFilter: ColorFilter.mode(
-                currentIndex == 1 ? Colors.white : Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon: NavBarUnselectedIcon(imageName: 'hadeth'),
+            activeIcon: NavBarSelectedIcon(imageName: 'hadeth'),
             label: 'Hadeth',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/sebha.svg',
-              colorFilter: ColorFilter.mode(
-                currentIndex == 2 ? Colors.white : Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon: NavBarUnselectedIcon(imageName: 'sebha'),
+            activeIcon: NavBarSelectedIcon(imageName: 'sebha'),
             label: 'Sebha',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/radio.svg',
-              colorFilter: ColorFilter.mode(
-                currentIndex == 3 ? Colors.white : Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon: NavBarUnselectedIcon(imageName: 'radio'),
+            activeIcon: NavBarSelectedIcon(imageName: 'radio'),
             label: 'Radio',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/time.svg',
-              colorFilter: ColorFilter.mode(
-                currentIndex == 4 ? Colors.white : Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon: NavBarUnselectedIcon(imageName: 'time'),
+            activeIcon: NavBarSelectedIcon(imageName: 'time'),
             label: 'Time',
           ),
         ],
