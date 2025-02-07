@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:islami/app_theme.dart';
 import 'package:islami/tabs/quran/quran_tab.dart';
 import 'package:islami/tabs/hadeth/hadeth_tab.dart';
 import 'package:islami/tabs/radio/radio_tab.dart';
