@@ -21,7 +21,7 @@ class IslamiApp extends StatelessWidget {
       },
       initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darktheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
     );
   }

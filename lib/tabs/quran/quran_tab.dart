@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:islami/app_theme.dart';
 import 'package:islami/tabs/quran/sura.dart';
 import 'package:islami/tabs/quran/sura_item.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class QuranTab extends StatelessWidget {
+class QuranTab extends StatefulWidget {
+  const QuranTab({super.key});
+
+  @override
+  State<QuranTab> createState() => _QuranTabState();
+}
+
+class _QuranTabState extends State<QuranTab> {
   List<String> arabicSuraNames = [
     "الفاتحه",
     "البقرة",
@@ -353,46 +361,164 @@ class QuranTab extends StatelessWidget {
     6,
   ];
 
-  QuranTab({super.key});
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
+    TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Text(
-              'Sura List',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.white,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: TextField(
+            onChanged: (query) {
+              searchSuraName(query); // Call search function when text changes
+            },
+            decoration: InputDecoration(
+              hintText: 'Sura Name',
+              hintStyle: textTheme.titleMedium
+                  ?.copyWith(color: AppTheme.white.withOpacity(0.6)),
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  'assets/icons/quran.svg',
+                  colorFilter: ColorFilter.mode(
+                    AppTheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: AppTheme.primary,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: AppTheme.primary,
+                ),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
+            style: textTheme.titleMedium,
           ),
-          Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              itemBuilder: (_, index) => SuraItem(Sura(
-                englishName: englishSuraNames[index],
-                arabicName: arabicSuraNames[index],
-                ayatCount: ayatCounts[index],
-                num: index,
-              )),
-              itemCount: englishSuraNames.length,
-              separatorBuilder: (_, __) => Divider(
-                thickness: 1,
-                color: AppTheme.white,
-                indent: screenWidth * 0.1,
-                endIndent: screenWidth * 0.1,
-              ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Text(
+            'Sura List',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.white,
             ),
           ),
-        ],
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            itemBuilder: (_, index) {
+              // Show all Sura items if no search query is entered
+              if (searchResutlsIndexes.isEmpty ||
+                  searchResutlsIndexes.contains(index)) {
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to Sura details screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SuraDetailsScreen(
+                          sura: Sura(
+                            englishName: englishSuraNames[index],
+                            arabicName: arabicSuraNames[index],
+                            ayatCount: ayatCounts[index],
+                            num: index,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: SuraItem(
+                    Sura(
+                      englishName: englishSuraNames[index],
+                      arabicName: arabicSuraNames[index],
+                      ayatCount: ayatCounts[index],
+                      num: index,
+                    ),
+                  ),
+                );
+              } else {
+                return SizedBox(); // Hide items that don't match the search query
+              }
+            },
+            itemCount: englishSuraNames.length,
+            separatorBuilder: (_, index) {
+              // Show divider only if the item is visible
+              if (searchResutlsIndexes.isEmpty ||
+                  searchResutlsIndexes.contains(index)) {
+                return Divider(
+                  thickness: 1,
+                  color: AppTheme.white,
+                  indent: screenWidth * 0.1,
+                  endIndent: screenWidth * 0.1,
+                );
+              } else {
+                return SizedBox(); // Hide dividers for hidden items
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<int> searchResutlsIndexes = [];
+
+  void searchSuraName(String query) {
+    setState(() {
+      searchResutlsIndexes.clear();
+      if (query.isEmpty) {
+        // If the query is empty, show all Sura items
+        return;
+      }
+      for (int i = 0; i < englishSuraNames.length; i++) {
+        if (englishSuraNames[i].toLowerCase().contains(query.toLowerCase()) ||
+            arabicSuraNames[i].contains(query)) {
+          searchResutlsIndexes.add(i); // Add matching indices to the list
+        }
+      }
+    });
+  }
+}
+
+// SuraDetailsScreen (Example)
+class SuraDetailsScreen extends StatelessWidget {
+  final Sura sura;
+
+  const SuraDetailsScreen({super.key, required this.sura});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(sura.englishName),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              sura.arabicName,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text("Number of Ayat: ${sura.ayatCount}"),
+          ],
+        ),
       ),
     );
   }

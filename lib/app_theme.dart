@@ -7,11 +7,11 @@ class AppTheme {
 
   static ThemeData lightTheme = ThemeData(
     appBarTheme: AppBarTheme(
-      backgroundColor: black,
-      foregroundColor: primary,
+      backgroundColor: primary, // Change this to primary color
+      foregroundColor: black, // Change this to black or any contrasting color
       centerTitle: true,
       titleTextStyle: TextStyle(
-        color: primary,
+        color: black, // Change this to black or any contrasting color
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
@@ -26,8 +26,18 @@ class AppTheme {
     ),
   );
 
-  static ThemeData darktheme = ThemeData(
+  static ThemeData darkTheme = ThemeData(
     primaryColor: primary,
+    appBarTheme: AppBarTheme(
+      backgroundColor: primary, // Change this to primary color
+      foregroundColor: white, // Change this to white or any contrasting color
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        color: white, // Change this to white or any contrasting color
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: primary,
       selectedItemColor: white,

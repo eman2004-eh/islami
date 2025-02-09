@@ -3,9 +3,9 @@ import 'package:islami/tabs/quran/sura.dart';
 import 'package:islami/tabs/quran/sura_details_screen.dart';
 
 class SuraItem extends StatelessWidget {
-  SuraItem(this.sura, {super.key});
+  const SuraItem(this.sura, {super.key});
 
-  Sura sura;
+  final Sura sura;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,8 @@ class SuraItem extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(
+        Navigator.pushNamed(
+          context,
           SuraDetailsScreen.routeName,
           arguments: sura,
         );
@@ -31,7 +32,7 @@ class SuraItem extends StatelessWidget {
               ),
             ),
             child: Text(
-              '${sura.num + 1}',
+              '${sura.num}',
               style: textTheme.titleLarge,
             ),
           ),
@@ -43,7 +44,7 @@ class SuraItem extends StatelessWidget {
                 style: textTheme.titleLarge,
               ),
               Text(
-                '${sura.arabicName} Verses',
+                '${sura.ayatCount} Verses',
                 style: textTheme.titleSmall,
               ),
             ],

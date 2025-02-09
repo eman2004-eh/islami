@@ -15,23 +15,46 @@ class SuraDetailsScreen extends StatefulWidget {
 
 class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
   List<String> ayat = [];
+  Sura? sura;
+  bool isLoading = true;
+  bool hasError = false;
 
-  late Sura sura;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)!.settings.arguments;
+    if (args is Sura) {
+      sura = args;
+      loadSuraFile();
+    } else {
+      setState(() {
+        hasError = true;
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    sura = ModalRoute.of(context)!.settings.arguments as Sura;
-    if (ayat.isEmpty) {
-      loadSuraFile();
+    if (hasError || sura == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Error"),
+        ),
+        body: Center(
+          child: Text("Sura details not found or invalid Sura object."),
+        ),
+      );
     }
+
     double screenHeight = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(sura.englishName),
+        title: Text(sura!.englishName),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -44,7 +67,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
                   fit: BoxFit.fill,
                 ),
                 Text(
-                  sura.arabicName,
+                  sura!.arabicName,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: AppTheme.primary,
                       ),
@@ -57,7 +80,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
               ],
             ),
           ),
-          ayat.isEmpty
+          isLoading
               ? LoadingIndicator()
               : Expanded(
                   child: ListView.separated(
@@ -84,9 +107,19 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
   }
 
   Future<void> loadSuraFile() async {
-    String suraFileContent =
-        await rootBundle.loadString('assets/text/sura/${sura.num}.txt');
-    ayat = suraFileContent.split('\r\n');
-    setState(() {});
+    try {
+      String suraFileContent =
+          await rootBundle.loadString('assets/text/sura/${sura!.num}.txt');
+      setState(() {
+        ayat = suraFileContent.split('\r\n');
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error loading sura file: $e");
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }
   }
 }
