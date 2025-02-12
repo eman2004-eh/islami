@@ -6,18 +6,20 @@ class AppTheme {
   static const Color white = Color(0xFFFFFFFF);
 
   static ThemeData lightTheme = ThemeData(
+    primaryColor: primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: primary, // Change this to primary color
-      foregroundColor: black, // Change this to black or any contrasting color
+      backgroundColor: black,
+      foregroundColor: primary,
       centerTitle: true,
       titleTextStyle: TextStyle(
-        color: black, // Change this to black or any contrasting color
+        color: primary,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),
     scaffoldBackgroundColor: black,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      type: BottomNavigationBarType.fixed,
       backgroundColor: primary,
       selectedItemColor: white,
       unselectedItemColor: black,
@@ -29,11 +31,11 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     primaryColor: primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: primary, // Change this to primary color
-      foregroundColor: white, // Change this to white or any contrasting color
+      backgroundColor: primary,
+      foregroundColor: white,
       centerTitle: true,
       titleTextStyle: TextStyle(
-        color: white, // Change this to white or any contrasting color
+        color: white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),

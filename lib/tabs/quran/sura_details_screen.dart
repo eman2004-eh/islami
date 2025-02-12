@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:islami/app_theme.dart';
-import 'package:islami/tabs/quran/sura.dart';
+import 'package:islami/tabs/quran/sura.dart'; // Ensure Sura class is imported
 import 'package:islami/widgets/loading_indicator.dart';
 
 class SuraDetailsScreen extends StatefulWidget {
   static const routeName = '/sura-details';
 
-  const SuraDetailsScreen({super.key});
+  const SuraDetailsScreen(
+      {super.key}); // Remove the required Sura sura parameter
 
   @override
   State<SuraDetailsScreen> createState() => _SuraDetailsScreenState();
@@ -39,9 +40,9 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
     if (hasError || sura == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Error"),
+          title: const Text("Error"),
         ),
-        body: Center(
+        body: const Center(
           child: Text("Sura details not found or invalid Sura object."),
         ),
       );
@@ -57,7 +58,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -81,10 +82,10 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
             ),
           ),
           isLoading
-              ? LoadingIndicator()
+              ? const LoadingIndicator()
               : Expanded(
                   child: ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemBuilder: (_, index) => Text(
                       ayat[index],
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -93,7 +94,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
                       textAlign: TextAlign.center,
                     ),
                     itemCount: ayat.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 12),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                   ),
                 ),
           Image.asset(
@@ -115,7 +116,6 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error loading sura file: $e");
       setState(() {
         isLoading = false;
         hasError = true;

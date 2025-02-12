@@ -1,8 +1,8 @@
 class Sura {
-  String englishName;
-  String arabicName;
-  int ayatCount;
-  int num;
+  final String englishName;
+  final String arabicName;
+  final int ayatCount;
+  final int num;
 
   Sura({
     required this.englishName,
