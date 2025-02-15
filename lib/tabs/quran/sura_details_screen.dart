@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:islami/app_theme.dart';
-import 'package:islami/tabs/quran/sura.dart'; // Ensure Sura class is imported
+import 'package:islami/tabs/quran/sura.dart';
 import 'package:islami/widgets/loading_indicator.dart';
 
 class SuraDetailsScreen extends StatefulWidget {
   static const routeName = '/sura-details';
+
+  const SuraDetailsScreen({super.key});
 
   @override
   State<SuraDetailsScreen> createState() => _SuraDetailsScreenState();
@@ -14,13 +16,32 @@ class SuraDetailsScreen extends StatefulWidget {
 class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
   List<String> ayat = [];
   late Sura sura;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    sura = ModalRoute.of(context)!.settings.arguments as Sura;
+    loadSuraFile();
+  }
+
+  Future<void> loadSuraFile() async {
+    try {
+      String suraFileContent =
+          await rootBundle.loadString('assets/text/sura/${sura.num}.txt');
+      ayat = suraFileContent.split('\r\n');
+    } catch (e) {
+      print('Error loading Sura file: $e');
+      // Optionally, show an error message to the user
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    sura = ModalRoute.of(context)!.settings.arguments as Sura;
-    if (ayat.isEmpty) {
-      loadSuraFile();
-    }
     double screenHeight = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
@@ -54,11 +75,12 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
               ],
             ),
           ),
-          ayat.isEmpty
+          isLoading
               ? LoadingIndicator()
               : Expanded(
                   child: ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    physics: BouncingScrollPhysics(),
                     itemBuilder: (_, index) => Text(
                       ayat[index],
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -78,12 +100,5 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> loadSuraFile() async {
-    String suraFileContent =
-        await rootBundle.loadString('assets/text/sura/${sura.num}.txt');
-    ayat = suraFileContent.split('\r\n');
-    setState(() {});
   }
 }

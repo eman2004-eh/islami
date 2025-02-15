@@ -118,6 +118,7 @@ class SuraService {
     "الفلق",
     "الناس"
   ];
+
   static List<String> englishSuraNames = [
     "Al-Fatiha",
     "Al-Baqarah",
@@ -234,6 +235,7 @@ class SuraService {
     "Al-Falaq",
     "An-Nas"
   ];
+
   static List<int> ayatCounts = [
     7,
     286,
@@ -356,12 +358,19 @@ class SuraService {
 
   static List<Sura> mostRecently = [];
 
-  static Sura getSuraFromIndex(int index) => Sura(
-        englishName: SuraService.englishSuraNames[index], // Named argument
-        arabicName: SuraService.arabicSuraNames[index], // Named argument
-        ayatCount: SuraService.ayatCounts[index],
-        num: index, // Named argument
-      );
+  static Sura getSuraFromIndex(int index) {
+    // Validate the index before accessing the lists
+    if (index < 0 || index >= arabicSuraNames.length) {
+      throw RangeError(
+          'Index $index is out of range. Valid range is 0 to ${arabicSuraNames.length - 1}');
+    }
+    return Sura(
+      englishName: englishSuraNames[index],
+      arabicName: arabicSuraNames[index],
+      ayatCount: ayatCounts[index],
+      num: index + 1, // Sura numbers start from 1, not 0
+    );
+  }
 
   static void searchSuraName(String query) {
     searchResults.clear();
@@ -374,28 +383,38 @@ class SuraService {
   }
 
   static Future<void> getMostRecently() async {
-    SharedPreferences shaeadPref = await SharedPreferences.getInstance();
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
     List<String>? mostRecentlyIndexes =
-        shaeadPref.getStringList('mostRecentlyIndexes');
+        sharedPref.getStringList('mostRecentlyIndexes');
     if (mostRecentlyIndexes == null) return;
-    mostRecently = mostRecentlyIndexes.map(
-      (indexString) {
-        int index = int.parse(indexString);
-        Sura sura = getSuraFromIndex(index);
-        return sura;
-      },
-    ).toList();
+
+    // Filter out invalid indices and convert to integers
+    mostRecently = mostRecentlyIndexes
+        .map((indexString) {
+          int index = int.tryParse(indexString) ??
+              -1; // Use -1 as a fallback for invalid indices
+          return index;
+        })
+        .where((index) =>
+            index >= 0 &&
+            index < arabicSuraNames.length) // Filter valid indices
+        .map((index) =>
+            getSuraFromIndex(index)) // Convert valid indices to Sura objects
+        .toList();
   }
 
   static Future<void> addSuraToMostRecently(Sura sura) async {
+    // Check if the Sura is already in the list
     bool isFound = mostRecently
-        .any((MostRecentlySura) => MostRecentlySura.num == sura.num);
+        .any((mostRecentlySura) => mostRecentlySura.num == sura.num);
     if (!isFound) {
       mostRecently.add(sura);
+
+      // Convert Sura numbers to strings and save to SharedPreferences
       List<String> mostRecentlyIndexes =
           mostRecently.map((sura) => (sura.num - 1).toString()).toList();
-      SharedPreferences shaeadPref = await SharedPreferences.getInstance();
-      shaeadPref.setStringList('mostRecentlyIndexes', mostRecentlyIndexes);
+      SharedPreferences sharedPref = await SharedPreferences.getInstance();
+      sharedPref.setStringList('mostRecentlyIndexes', mostRecentlyIndexes);
     }
   }
 }

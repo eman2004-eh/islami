@@ -5,6 +5,10 @@ import 'package:islami/tabs/hadeth/hadeth.dart';
 class HadethDetailsScreen extends StatelessWidget {
   static const String routeName = 'hadeth-details';
 
+  final String hadeth;
+
+  const HadethDetailsScreen({super.key, required this.hadeth});
+
   @override
   Widget build(BuildContext context) {
     Hadeth hadeth = ModalRoute.of(context)!.settings.arguments as Hadeth;

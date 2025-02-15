@@ -6,7 +6,7 @@ import 'package:islami/tabs/hadeth/hadeth_details_screen.dart';
 import 'package:islami/widgets/loading_indicator.dart';
 
 class HadethItem extends StatefulWidget {
-  HadethItem({required this.index});
+  HadethItem({super.key, required this.index});
 
   int index;
 
@@ -73,7 +73,7 @@ class _HadethItemState extends State<HadethItem> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage(
-                          'assets/images/hadeth_card_backgroung.png'),
+                          'assets/images/hadeth_card_background.png'),
                       fit: BoxFit.fill),
                 ),
                 child: hadeth == null

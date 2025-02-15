@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  LoadingIndicator({this.color});
+  LoadingIndicator({super.key, this.color});
 
   Color? color;
 
